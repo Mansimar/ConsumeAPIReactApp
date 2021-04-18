@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Axios from "axios";
+import React, { useState } from "react";
+import DisplayData from "./DisplayData";
 
 function App() {
+  const [data, setData] = useState("");
+  const [id, setId] = useState("");
+  const [isLoaded, setIsLoaded] = useState("false");
+
+  const GetData = () => {
+    Axios.get("https://localhost:44397/api/Product/" + id)
+      .then((response) => {
+        setData(response.data);
+        setIsLoaded("true");
+      })
+      .catch((error) => console.error(`Error: ${error}`), setIsLoaded("false"));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      Product Id :
+      <input
+        type="text"
+        value={id}
+        id="productId"
+        onChange={(e) => setId(e.target.value)}
+      ></input>
+      <button onClick={(e) => GetData()}>Get Data</button>
+      {isLoaded === "true" && <DisplayData data={data} />}
+      {isLoaded === "false" && <DisplayData data={null} />}
     </div>
   );
 }
